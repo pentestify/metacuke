@@ -25,12 +25,9 @@ module Metaworld
 			begin
 				@rpc  = Msf::RPC::Client.new(:host => @system, :port => @port, :user => @username, :pass => @password, :ssl => true )
 			rescue Exception => e
-				puts "Unable to connect"
+				raise "Unable to connect"
+				exit
 			end
-		end
-			
-		def run_module
-			raise "Not Implemented"
 		end
 	end
 	
@@ -154,7 +151,12 @@ private
 					#puts
 					
 					# then call execute
-					@client.rpc.call("module.execute", module_type, module_name, options_hash)	
+					begin
+						@client.rpc.call("module.execute", module_type, module_name, options_hash)	
+					rescue Exception => e
+						puts "DEBUG: exception #{e}"
+					end
+
 				end
 			end
 		end
@@ -179,14 +181,15 @@ private
 					# Set a default target unless it's already been set by the user
 					options_hash["TARGET"] = 0 unless options_hash["TARGET"]
 		
-					#puts
-					#puts "DEBUG: Module type: #{module_type}"
-					#puts "DEBUG: Module name: #{module_name}"
-					#puts "DEBUG: Options Hash: #{options_hash}"
-					#puts
+					puts
+					puts "DEBUG: Module type: #{module_type}"
+					puts "DEBUG: Module name: #{module_name}"
+					puts "DEBUG: Options Hash: #{options_hash}"
+					puts
 					
 					# then call execute
-					@client.rpc.call("module.execute", module_type, module_name, options_hash)	
+				  @client.rpc.call("module.execute", module_type, module_name, options_hash)
+
 				end
 			end
 		end		
