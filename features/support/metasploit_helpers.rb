@@ -27,28 +27,15 @@ module Metaworld
 			port = "55553"
 			
 			begin
-				# make the connection
+				# Make the connection with the msfrpc-client gem -- note that this handles the 
+				# token for us, so we should only need to authenticate up front, then make 
+				# the calls via the rpc object. 
 				@rpc  = Msf::RPC::Client.new(:host => system, :port => port, :ssl => true, :user => "test", :pass => "test" )
-				#response = @rpc.call("auth.login", username, password)
-				
-				# Check to make sure we successfully authenticated
-				#if response['result'] == "success"
-				#	puts "DEBUG: Successfully authenticated"
-				#	@token = response['token']
-				#	puts "DEBUG: Token is: #{@token}"
-				#else
-				#	raise "Unable to authenticate"
-				#end
 			rescue Exception => e
 				raise "Unable to connect: #{e}"
 				exit
 			end
-
 		end
-
-		#def call(method, *args)
-		#	return @rpc.call(method, @token, args)
-		#end
 
 	end
 	
@@ -133,13 +120,13 @@ module Metaworld
 			# Set a default target unless it's already been set by the user
 			options_hash["TARGET"] = 0 unless options_hash["TARGET"]
 
-			puts
-			puts "DEBUG: Module type: #{module_type}"
-			puts "DEBUG: Module name: #{module_name}"
-			puts "DEBUG: Options Hash: #{options_hash}"
-			puts "DEBUG: Method: module.execute"
-			puts "DEBUG: Token: #{@client.token}"
-			puts
+			#puts
+			#puts "DEBUG: Module type: #{module_type}"
+			#puts "DEBUG: Module name: #{module_name}"
+			#puts "DEBUG: Options Hash: #{options_hash}"
+			#puts "DEBUG: Method: module.execute"
+			#puts "DEBUG: Token: #{@client.token}"
+			#puts
 			
 			# then call execute
 			@client.rpc.call("module.execute", module_type, module_name, options_hash)	
@@ -169,13 +156,13 @@ private
 					# Set a default target unless it's already been set by the user
 					options_hash["TARGET"] = 0 unless options_hash["TARGET"]
 		
-					puts
-					puts "DEBUG: Module type: #{module_type}"
-					puts "DEBUG: Module name: #{module_name}"
-					puts "DEBUG: Options Hash: #{options_hash}"
-					puts "DEBUG: Method: module.execute"
-					puts "DEBUG: Token: #{@client.token}"
-					puts
+					#puts
+					#puts "DEBUG: Module type: #{module_type}"
+					#puts "DEBUG: Module name: #{module_name}"
+					#puts "DEBUG: Options Hash: #{options_hash}"
+					#puts "DEBUG: Method: module.execute"
+					#puts "DEBUG: Token: #{@client.token}"
+					#puts
 			
 					# then call execute
 					begin
@@ -208,13 +195,13 @@ private
 					# Set a default target unless it's already been set by the user
 					options_hash["TARGET"] = 0 unless options_hash["TARGET"]
 		
-					puts
-					puts "DEBUG: Module type: #{module_type}"
-					puts "DEBUG: Module name: #{module_name}"
-					puts "DEBUG: Options Hash: #{options_hash}"
-					puts "DEBUG: Method: module.execute"
-					puts "DEBUG: Token: #{@client.token}"
-					puts
+					#puts
+					#puts "DEBUG: Module type: #{module_type}"
+					#puts "DEBUG: Module name: #{module_name}"
+					#puts "DEBUG: Options Hash: #{options_hash}"
+					#puts "DEBUG: Method: module.execute"
+					#puts "DEBUG: Token: #{@client.token}"
+					#puts
 					
 					# then call execute
 				  @client.rpc.call("module.execute", module_type, module_name, options_hash)
