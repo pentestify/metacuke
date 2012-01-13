@@ -13,24 +13,50 @@ module Metaworld
 		end
 	end
 
+	#
+	# This class wraps the RPC connection and handles passing the token around
 	class Client
+	
 		attr_accessor :rpc
+		attr_accessor :token
 	
 		def initialize
-			@system = "127.0.0.1"
-			@username = "test"
-			@password = "bC}W0k8$"
-			@port = "3790"
+			system = "127.0.0.1"
+			username = "test"
+			password = "test"
+			port = "55553"
 			
 			begin
-				@rpc  = Msf::RPC::Client.new(:host => @system, :port => @port, :user => @username, :pass => @password, :ssl => true )
+				# make the connection
+				@rpc  = Msf::RPC::Client.new(:host => system, :port => port, :ssl => true, :user => "test", :pass => "test" )
+				#response = @rpc.call("auth.login", username, password)
+				
+				# Check to make sure we successfully authenticated
+				#if response['result'] == "success"
+				#	puts "DEBUG: Successfully authenticated"
+				#	@token = response['token']
+				#	puts "DEBUG: Token is: #{@token}"
+				#else
+				#	raise "Unable to authenticate"
+				#end
 			rescue Exception => e
-				raise "Unable to connect"
+				raise "Unable to connect: #{e}"
 				exit
 			end
+
 		end
+
+		#def call(method, *args)
+		#	return @rpc.call(method, @token, args)
+		#end
+
 	end
 	
+	#
+	# Below you'll find methods that can be called directly in step 
+	# definitions. TODO - segment this up a bit and make more OO
+	#
+
 	def setup
 		@client = Client.new
 	end
@@ -59,9 +85,7 @@ module Metaworld
 		else
 			return 0 
 		end
-	
 	end
-
 
 	def check_logins(type="smb",systems,usernames,passwords)
 		self.setup unless @client
@@ -102,7 +126,6 @@ module Metaworld
  			# -----------------------------------------------
 			# Start out with an empty settings hash	and pull out each of the options
 			options_hash = {}
-			options_string.split(",").each{ |setting| options_hash["#{setting.split("=").first}"] = setting.split("=").last }
 
 			# Set a default payload unless it's already been set by the user
 			options_hash["PAYLOAD"] = "windows/meterpreter/bind_tcp" unless options_hash["PAYLOAD"]
@@ -110,11 +133,13 @@ module Metaworld
 			# Set a default target unless it's already been set by the user
 			options_hash["TARGET"] = 0 unless options_hash["TARGET"]
 
-			#puts
-			#puts "DEBUG: Module type: #{module_type}"
-			#puts "DEBUG: Module name: #{module_name}"
-			#puts "DEBUG: Options Hash: #{options_hash}"
-			#puts
+			puts
+			puts "DEBUG: Module type: #{module_type}"
+			puts "DEBUG: Module name: #{module_name}"
+			puts "DEBUG: Options Hash: #{options_hash}"
+			puts "DEBUG: Method: module.execute"
+			puts "DEBUG: Token: #{@client.token}"
+			puts
 			
 			# then call execute
 			@client.rpc.call("module.execute", module_type, module_name, options_hash)	
@@ -144,12 +169,14 @@ private
 					# Set a default target unless it's already been set by the user
 					options_hash["TARGET"] = 0 unless options_hash["TARGET"]
 		
-					#puts
-					#puts "DEBUG: Module type: #{module_type}"
-					#puts "DEBUG: Module name: #{module_name}"
-					#puts "DEBUG: Options Hash: #{options_hash}"
-					#puts
-					
+					puts
+					puts "DEBUG: Module type: #{module_type}"
+					puts "DEBUG: Module name: #{module_name}"
+					puts "DEBUG: Options Hash: #{options_hash}"
+					puts "DEBUG: Method: module.execute"
+					puts "DEBUG: Token: #{@client.token}"
+					puts
+			
 					# then call execute
 					begin
 						@client.rpc.call("module.execute", module_type, module_name, options_hash)	
@@ -185,6 +212,8 @@ private
 					puts "DEBUG: Module type: #{module_type}"
 					puts "DEBUG: Module name: #{module_name}"
 					puts "DEBUG: Options Hash: #{options_hash}"
+					puts "DEBUG: Method: module.execute"
+					puts "DEBUG: Token: #{@client.token}"
 					puts
 					
 					# then call execute

@@ -53,7 +53,6 @@ When /^I run the (.+) module with options (.+)$/ do |module_names,options|
 			run_module(mod, @systems, options)
 	end
 end
-
 	
 When /^I check for valid logins via (.+)$/ do |types|
 	types = types.split(",")
