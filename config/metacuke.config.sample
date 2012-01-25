@@ -1,0 +1,4 @@
+metasploit_system: 127.0.0.1
+metasploit_port: 55552
+metasploit_user: test
+metasploit_pass: test

@@ -1,15 +1,19 @@
 $:.unshift(File.join(File.dirname(__FILE__), '..', '..', '..', '..', '..', 'lib'))
 
+require 'yaml'
 require 'msfrpc-client'
-#require 'rex"
+require 'nmap/parser'
+require 'rspec'
 
-module Metaworld
+module MetacukeWorld
 
 	class Metadata
 		attr_accessor :files
+		attr_accessor :config
 
 		def initialize
-			@files = "/home/jcran/framework/external/metacuke/data"
+			@files =  File.join(File.dirname(__FILE__), "..", "..", "data")
+			@config =  File.join(File.dirname(__FILE__), "..", "..", "config")
 		end
 	end
 
@@ -21,15 +25,17 @@ module Metaworld
 		attr_accessor :token
 	
 		def initialize
-			system = "127.0.0.1"
-			username = "test"
-			password = "test"
-			port = "55553"
+			settings_hash = YAML::load_file(Metadata.new.config)
+
+			system = settings_hash["metasploit_system"]
+			username = settings_hash["username"]
+			password = settings_hash["password"]
+			port = settings_hash["port"]
 			
 			begin
-				# Make the connection with the msfrpc-client gem -- note that this handles the 
-				# token for us, so we should only need to authenticate up front, then make 
-				# the calls via the rpc object. 
+				# Make the connection with the msfrpc-client gem -- note that this handles 
+				# the token for us, so we should only need to authenticate up front, then 
+				# make the calls via the rpc object. 
 				@rpc  = Msf::RPC::Client.new(:host => system, :port => port, :ssl => true, :user => "test", :pass => "test" )
 			rescue Exception => e
 				raise "Unable to connect: #{e}"
@@ -48,10 +54,6 @@ module Metaworld
 		@client = Client.new
 	end
 	
-	def scan_network(range)
-		`nmap -oX /tmp/test #{range}`
-	end
-
 	def get_session_count
 		self.setup unless @client
 		session_list = @client.rpc.call("session.list")
