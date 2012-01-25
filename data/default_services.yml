@@ -1,5 +1,5 @@
 - ip_address: 127.0.0.1
-  services:  
+  tcp_services:  
     - 22
     - 3790
     - 8080
