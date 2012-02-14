@@ -1,3 +1,7 @@
 features/jcran_home
+features/production
+features/vulnerable
 data/jcran*
+data/production
+data/vulnerabl
 config/metacuke.config
