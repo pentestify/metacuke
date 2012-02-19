@@ -3,5 +3,5 @@ features/production
 features/vulnerable
 data/jcran*
 data/production
-data/vulnerabl
+data/vulnerable
 config/metacuke.config
