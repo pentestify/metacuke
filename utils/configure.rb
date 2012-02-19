@@ -19,8 +19,8 @@ nmap_command_line = "nmap -oX #{nmap_output_path} #{range.join(" ")}"
 data_path = File.join(File.dirname(__FILE__), "..", "data")
 env_path = File.join(data_path, env)
 
-FileUtils.mkdir(env_dir) unless File.directory? env_path
-FileUtils.mkdir(env_dir) unless File.directory? data_path
+FileUtils.mkdir(env_path) unless File.directory? env_path
+FileUtils.mkdir(data_path) unless File.directory? data_path
 
 f = File.open(File.join(env_path, "known_systems.txt"),"w")
 
