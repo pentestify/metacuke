@@ -38,7 +38,8 @@ World(MetacukeWorld)
     # Parse the nmap scan, and see if we have anything left 
     #
     parser = Nmap::Parser.parsefile(@nmap_output_path)
-    parser.hosts("up") do |host|
-      @systems.should contain_host host
+    parser.hosts("up").each do |host|
+       puts "checking host #{host.addr}"
+       @systems.should contain_host host
     end
   end
