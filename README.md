@@ -4,11 +4,13 @@
 
 The Metacuke project brings together the awesome Metasploit Framework and the excellent Cucumber regression testing framework. It makes it possible to write plain-english tests for your infrastructure which are backed by Metasploit. For example, you can write a test: 
 
+```
   Scenario:   Check default logins
     Given I have a list of default systems
     And I have a list of default usernames and passwords
     And I check for valid logins via http
     Then I should have 0 valid logins
+```
 
 ### Getting Started
 
