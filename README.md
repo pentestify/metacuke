@@ -1,6 +1,6 @@
-== Metacuke
+## Metacuke
 
-=== About
+### About
 
 The Metacuke project brings together the awesome Metasploit Framework and the excellent Cucumber regression testing framework. It makes it possible to write plain-english tests for your infrastructure which are backed by Metasploit. For example, you can write a test: 
 
@@ -10,7 +10,7 @@ The Metacuke project brings together the awesome Metasploit Framework and the ex
     And I check for valid logins via http
     Then I should have 0 valid logins
 
-=== Getting Started
+### Getting Started
 
 Metacuke can be installed by pulling down the repository from Github (https://github.com/jcran/metacuke)
 
@@ -18,7 +18,7 @@ Metacuke must be pointed at an instance of the Metasploit Framework RPC service.
 
 Once the config file has been edited, you must write tests for your infrastructure. You can find samples in the features/ directory.  
 
-=== Advanced
+### Advanced
 
 For more information on Metasploit, see: http://www.metasploit.com/
 
