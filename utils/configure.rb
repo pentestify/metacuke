@@ -22,7 +22,6 @@ env_path = File.join(data_path, env)
 FileUtils.mkdir(env_path) unless File.directory? env_path
 FileUtils.mkdir(data_path) unless File.directory? data_path
 
-
 #
 # Populate known nets
 #
